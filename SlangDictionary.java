@@ -17,7 +17,6 @@ public class SlangDictionary{
 	public static String fileslang="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/slang.txt";
 	public static String filehistory="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/history.txt";
 	public static ArrayList<String>historySearch=new ArrayList<String>();
-	public static ArrayList<String>tempHistorySearch=new ArrayList<String>(); 
 	public static Scanner sc = new Scanner(System.in);
 	
 	
@@ -140,31 +139,33 @@ public class SlangDictionary{
     }
     
     public static List<String> searchSlangWord() {
-    	System.out.println("Type the slang word you wanna search: ");
-    	
+    	System.out.print("\nType the slang word you wanna search: ");
     	String word=sc.nextLine();
     	word=word.toUpperCase();
     	updateHistoryFile(word);
+    	List<String>def=null;
     	for(String i: map.keySet()) {
-    		if(i.equals(word)) {
-    			List<String>def=map.get(i);
-    			return def;
+    		if(i.toUpperCase().compareTo(word)==0) {
+    			def=map.get(i);
     		}
     	}
-    	return null;
+    	return def;
     }
     
     public static void printDefinition() {
     	List<String> res=searchSlangWord();
-    	if(res==null)return;
-    	System.out.println("Definitions:");
+    	if(res==null){
+    		System.out.println("\nNot Found.");
+    		return;
+    	}
+    	System.out.println("\nDefinitions:");
     	for(String i:res) {
     		System.out.println("\t"+i);
     	}
     }
     
     public static ArrayList<Word> searchDefinition() {
-    	System.out.println("Type any definitions you wanna search: ");
+    	System.out.print("\nType any definitions you wanna search: ");
     	
     	String word=sc.nextLine();
     	ArrayList<Word>list=new ArrayList<Word>();
@@ -181,39 +182,134 @@ public class SlangDictionary{
     
     public static void printSlangWord() {
     	ArrayList<Word> res=searchDefinition();
-    	if(res==null)return;
+    	if(res.isEmpty()){
+    		System.out.println("\nNot Found.");
+    		return;
+    	}
+    	System.out.println("Slang Word relating to the definition you have searched: ");
+    	System.out.print("\nSlang Word");
+    	System.out.println("\tDefinitions");
     	for(Word i:res) {
-    		System.out.print(i.slangword+"\t");
-    		System.out.println(i.definition);
+    		System.out.print(i.slangword);
+    		System.out.println("\t\t"+i.definition);
     	}
     	
     }
+    public static void updateSlangFile() {
+    	try {
+    		File file=new File(fileslang);
+    		FileWriter fw=new FileWriter(file);
+    		BufferedWriter bw = new BufferedWriter(fw);
+    		for(String i:map.keySet()) {
+    			fw.write(i+"`");
+    			int j=0;
+        		for(String k:map.get(i))
+        		{
+        			if(j==0)fw.write(k);
+        			else fw.write("|"+k);
+        			j++;
+        		}
+        		fw.write("\n");
+    		}
+    		
+    		fw.close();
+            bw.close();
+        }
+        catch (Exception ex) {
+            System.out.println("Error: "+ex);
+        }
+    }
+    public static void updateSlangFile(Word newSlangWord) {
+    	try {
+    		File file=new File(fileslang);
+    		FileWriter fw=new FileWriter(file,true);
+    		BufferedWriter bw = new BufferedWriter(fw);
+    		fw.write("\n"+newSlangWord.slangword+"`");
+    		int j=0;
+    		for(String i:newSlangWord.definitions)
+    		{
+    			if(j==0)fw.write(i);
+    			else fw.write("|"+i);
+    			j++;
+    		}
+    		fw.close();
+            bw.close();
+        }
+        catch (Exception ex) {
+            System.out.println("Error: "+ex);
+        }
+    }
     
-    
-    
-    
-    public static void updateFileSlangWord() {
+    public static void addSlangWord() {
+    	System.out.print("Type the slang word you wanna add: ");
+    	String word=sc.nextLine();
+    	word=word.toUpperCase();
+    	System.out.print("Type the definitions of the slang word: ");
+    	ArrayList<String>definitions=new ArrayList<String>();
+    	String repeat=null;
+    	do {
+    	String def=null;
+    	def=sc.nextLine();
+    	definitions.add(def);
+    	System.out.println("You wanna add more definition?(yes/no)");
+    	String option=sc.nextLine();
+    	switch(option) {
+    	case "yes":
+    		repeat="1";
+    		System.out.print("Type another definition for the slang word: ");
+    		break;
+    	default:
+    		repeat="0";
+    		break;		
+    	}
+    	}while(repeat=="1");
+    	
+    	Word newSlangWord=new Word(word,definitions);
+    	updateSlangFile(newSlangWord);
     	
     }
     
-    
+    public static void deleteSlangWord() {
+    	System.out.print("Type the word you wanna delete: ");
+    	String word=sc.nextLine();
+    	word=word.toUpperCase();
+    	int k=0;
+    	for(String i:map.keySet()) {
+    		if(i.toUpperCase().equals(word)) {
+    			k=1;
+    		}
+    	}
+    	if(k==0)
+    		System.out.println("Not Found.");
+    	else map.remove(word);
+    	updateSlangFile();
+    	
+    }
+
+    public static void editSlangWord() {
+    	System.out.print("Type the slang word you wanna edit: ");
+    	String word=sc.nextLine();
+    	word=word.toUpperCase();
+    	
+    }
     
 	public static void Menu() {
 		String repeat=null; 
 		do
 		{
-			clearConsoleScreen();
-			repeat=null; 
 			getSlangWord();
+			clearConsoleScreen();
+			repeat=null;
 			System.out.println("\t\tMENU");
 			System.out.println("1. Find definitions by slang word.");
 			System.out.println("2. Find slang word by definiton.");
 			System.out.println("3. History.");
 			System.out.println("4. Add slang word.");
 			System.out.println("5. Edit slang word.");
-			System.out.println("6. Reset dictionary.");
-			System.out.println("7. Random a slang word.");
-			System.out.println("8. Slang Quiz.");
+			System.out.println("6. Delete slang word.");
+			System.out.println("7. Reset dictionary.");
+			System.out.println("8. Random a slang word.");
+			System.out.println("9. Slang Quiz.");
 			System.out.print("Your choice: ");
 			String option = sc.nextLine();
 			switch(option) {
@@ -227,13 +323,13 @@ public class SlangDictionary{
     		   viewHistory();
     		   break;
     	   case "4": 
-    		 
+    		   addSlangWord();
     		   break;
     	   case "5": 
-    		  
+    		   editSlangWord();
     		   break;
     	   case "6":
-    		   
+    		   deleteSlangWord();
     		   break;
     	   case "7":
     		  
@@ -262,4 +358,6 @@ public class SlangDictionary{
 	    sc.close();
 	}
 }
+		
+
 		
