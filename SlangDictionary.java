@@ -13,33 +13,45 @@ import java.util.*;
 
 public class SlangDictionary{
 	
-	public static String fileslang="Data/slang.txt";
-	public static String filehistory="Data/history.txt";
+	public static String fileslang="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/slang.txt";
+	public static String filehistory="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/history.txt";
 	public static Scanner sc = new Scanner(System.in);
 	
-	public class Word{
+	
+	
+	public static class Word{
 		public String slangword;
-		
-		public List<String>definition;
-		
-		Word(String slangword, List<String> definition){
+		public String definition;
+		public List<String>definitions;
+		Word(String slangword, String definition){
 			this.slangword=slangword;
 			this.definition=definition;
+		}
+		Word(String slangword, List<String> definitions){
+			this.slangword=slangword;
+			this.definitions=definitions;
 		}
 	}
 	
 	public static HashMap<String,List<String>> map=new HashMap<String,List<String>>();
 	
-	public SlangDictionary(){
+	/*public SlangDictionary(){
+		   this.Menu();
 	       this.getSlangWord();
 	       this.printDefinition();
 	       this.viewHistory();
-	    }
+	    }*/
 	
 	public static void clearConsoleScreen() {
-		System.out.print("\033[H\033[2J");
-        System.out.flush();
+		try
+		{	
+			new ProcessBuilder("cmd","/c","cls").inheritIO().start().waitFor();
+		}catch(Exception E)
+			{
+				System.out.println(E);
+			}
 	}
+		
 	
     
     public static void getSlangWord()
@@ -58,6 +70,7 @@ public class SlangDictionary{
 					String[] def = info[1].split("\\|");
 					for(int i=0;i<def.length;i++)
 					{
+						def[i]=def[i].toLowerCase();
 						def[i]=def[i].trim();
 					}
 					List<String>words=Arrays.asList(def);
@@ -74,10 +87,11 @@ public class SlangDictionary{
 	}
   
     
-    public static List<String> searchDefinition() {
-    	clearConsoleScreen();
-    	System.out.print("Type the slang word you wanna search: ");
+    public static List<String> searchSlangWord() {
+    	System.out.println("Type the slang word you wanna search: ");
+    	sc.nextLine();
     	String word=sc.nextLine();
+    	word=word.toUpperCase();
     	for(String i: map.keySet()) {
     		if(i.equals(word)) {
     			List<String>def=map.get(i);
@@ -88,19 +102,36 @@ public class SlangDictionary{
     }
     
     public static void printDefinition() {
-    	List<String> res=searchDefinition();
-    	System.out.println(res);
+    	List<String> res=searchSlangWord();
+    	System.out.println("Definitions:");
+    	for(String i:res) {
+    		System.out.println("\t"+i);
+    	}
     }
     
-    public String searchSlangWord(String word) {
-    	clearConsoleScreen();
+    public static ArrayList<Word> searchDefinition() {
+    	System.out.println("Type any definitions you wanna search: ");
+    	sc.nextLine();
+    	String word=sc.nextLine();
+    	ArrayList<Word>list=new ArrayList<Word>();
     	for(String i: map.keySet()) {
-    		if(i.equals(word)) {
-    			//List<String>=map.get(i);
-    			//return newslangword.slangword;
+    		for(String j: map.get(i)) {
+    			if(j.contains(word)) {
+    			Word w=new Word(i,j);
+    			list.add(w);
+    			}
     		}
     	}
-    	return null;
+    	return list;
+    }
+    
+    public static void printSlangWord() {
+    	ArrayList<Word> res=searchDefinition();
+    	for(Word i:res) {
+    		System.out.print(i.slangword+"\t");
+    		System.out.println(i.definition);
+    	}
+    	
     }
     
     public void viewHistory() {
@@ -109,66 +140,66 @@ public class SlangDictionary{
     
     
     
-	public static void Menu(){
-		System.out.println("\t\tMENU");
-		System.out.println("1. Find definitions by slang word.");
-		System.out.println("2. Find slang word by definiton.");
-		System.out.println("3. History.");
-		System.out.println("4. Add slang word.");
-		System.out.println("5. Edit slang word.");
-		System.out.println("6. Reset dictionary.");
-		System.out.println("7. Random a slang word.");
-		System.out.println("8. Slang Quiz.");
-	}
+	public static void Menu() {
+		String repeat=null; 
+		do
+		{
+			clearConsoleScreen();
+			getSlangWord();
+			System.out.println("\t\tMENU");
+			System.out.println("1. Find definitions by slang word.");
+			System.out.println("2. Find slang word by definiton.");
+			System.out.println("3. History.");
+			System.out.println("4. Add slang word.");
+			System.out.println("5. Edit slang word.");
+			System.out.println("6. Reset dictionary.");
+			System.out.println("7. Random a slang word.");
+			System.out.println("8. Slang Quiz.");
+			System.out.print("Your choice: ");
+			int option = sc.nextInt();
+			switch(option) {
+    	   case 1:
+    		   printDefinition();
+    		   break;
+    	   case 2:  
+    		   printSlangWord();
+    		   break;
+    	   case 3:
+    		   
+    		   break;
+    	   case 4: 
+    		 
+    		   break;
+    	   case 5: 
+    		  
+    		   break;
+    	   case 6:
+    		   
+    		   break;
+    	   case 7:
+    		  
+    		   break;
+    	   case 8:
+    		  
+    		   break;
+    	   case 9:
+    		   
+    		   break;
+    	   default: 
+    		   System.out.println("\n\tLua chon cua ban khong hop le.");
+    		   break;
+    	}
+    	
+		   System.out.println("\n\tBan co muon tiep tuc khong?(yes/no)");
+    	   System.out.print("\t\t\t");
+    	   repeat = sc.nextLine();
+    	   System.out.println("\n");
+	}while(repeat.equals("yes")==true);
+}
 	
 	public static void main(String[] args) {
-		SlangDictionary sl=new SlangDictionary();
-		String repeat=null;
-	    int option;
-	    do {
-	    	Menu();
-	    	option = sc.nextInt();
-	    	System.out.print("Your choice: ");
-	    	switch(option) {
-	    	   case 1:
-	    		   sl.printDefinition();
-	    		   break;
-	    	   case 2:  
-	    		 
-	    		   break;
-	    	   case 3:
-	    		   
-	    		   break;
-	    	   case 4: 
-	    		 
-	    		   break;
-	    	   case 5: 
-	    		  
-	    		   break;
-	    	   case 6:
-	    		   
-	    		   break;
-	    	   case 7:
-	    		  
-	    		   break;
-	    	   case 8:
-	    		  
-	    		   break;
-	    	   case 9:
-	    		   
-	    		   break;
-	    	   default: 
-	    		   System.out.println("\n\tLua chon cua ban khong hop le.");
-	    		   break;
-	    	   }
-	    		   
-	    	   System.out.println("\n\tBan co muon tiep tuc khong?(yes/no)");
-	    	   sc.nextLine();
-	    	   System.out.print("\t\t\t");
-	    	   repeat = sc.nextLine();
-	    	   System.out.println("\n");
-	       }while(repeat.equals("yes")==true);
-	       sc.close();
-		
+	    Menu();
+	    sc.close();
 	}
 }
+		
