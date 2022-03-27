@@ -3,18 +3,21 @@ package source;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.io.*;
-import java.util.*;
+
 
 public class SlangDictionary{
 	
 	public static String fileslang="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/slang.txt";
 	public static String filehistory="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/history.txt";
+	public static ArrayList<String>historySearch=new ArrayList<String>();
+	public static ArrayList<String>tempHistorySearch=new ArrayList<String>(); 
 	public static Scanner sc = new Scanner(System.in);
 	
 	
@@ -51,9 +54,7 @@ public class SlangDictionary{
 				System.out.println(E);
 			}
 	}
-		
 	
-    
     public static void getSlangWord()
 	{
 		try
@@ -85,13 +86,65 @@ public class SlangDictionary{
 	        System.out.println("ERROR"+ex);
 	    }
 	}
-  
+    
+   
+    
+    public static void getHistory() {
+    	try {
+    		
+    		File file=new File(filehistory);
+    		FileReader fr=new FileReader(file);
+    		BufferedReader br=new BufferedReader(fr);
+    		String data;
+    		while((data = br.readLine())!=null)
+			{
+				historySearch.add(data);	
+			}
+		    fr.close();
+	        br.close();
+	    }
+	    catch (Exception ex)
+	    {
+	        System.out.println("ERROR"+ex);
+	    }
+    }
+    
+ 
+    
+    public static void updateHistoryFile(String word) {
+    	try {
+    		File file=new File(filehistory);
+    		FileWriter fw=new FileWriter(file,true);
+    		BufferedWriter bw = new BufferedWriter(fw);
+    		fw.write(word+"\n");
+    		fw.close();
+            bw.close();
+        }
+        catch (Exception ex) {
+            System.out.println("Error: "+ex);
+        }
+    }
+    
+    public static void viewHistory() {
+    	getHistory();
+    	if(historySearch.isEmpty()) {
+    		System.out.println("Empty history!");
+    		return;
+    	}
+    	System.out.println("\t\tHistory - Slang Words you have searched: ");
+    	for(String slangWord: historySearch) {
+    		System.out.println("\t"+slangWord);
+    	}
+    	historySearch.clear();
+    	
+    }
     
     public static List<String> searchSlangWord() {
     	System.out.println("Type the slang word you wanna search: ");
-    	sc.nextLine();
+    	
     	String word=sc.nextLine();
     	word=word.toUpperCase();
+    	updateHistoryFile(word);
     	for(String i: map.keySet()) {
     		if(i.equals(word)) {
     			List<String>def=map.get(i);
@@ -103,6 +156,7 @@ public class SlangDictionary{
     
     public static void printDefinition() {
     	List<String> res=searchSlangWord();
+    	if(res==null)return;
     	System.out.println("Definitions:");
     	for(String i:res) {
     		System.out.println("\t"+i);
@@ -111,7 +165,7 @@ public class SlangDictionary{
     
     public static ArrayList<Word> searchDefinition() {
     	System.out.println("Type any definitions you wanna search: ");
-    	sc.nextLine();
+    	
     	String word=sc.nextLine();
     	ArrayList<Word>list=new ArrayList<Word>();
     	for(String i: map.keySet()) {
@@ -127,6 +181,7 @@ public class SlangDictionary{
     
     public static void printSlangWord() {
     	ArrayList<Word> res=searchDefinition();
+    	if(res==null)return;
     	for(Word i:res) {
     		System.out.print(i.slangword+"\t");
     		System.out.println(i.definition);
@@ -134,7 +189,10 @@ public class SlangDictionary{
     	
     }
     
-    public void viewHistory() {
+    
+    
+    
+    public static void updateFileSlangWord() {
     	
     }
     
@@ -145,6 +203,7 @@ public class SlangDictionary{
 		do
 		{
 			clearConsoleScreen();
+			repeat=null; 
 			getSlangWord();
 			System.out.println("\t\tMENU");
 			System.out.println("1. Find definitions by slang word.");
@@ -156,33 +215,33 @@ public class SlangDictionary{
 			System.out.println("7. Random a slang word.");
 			System.out.println("8. Slang Quiz.");
 			System.out.print("Your choice: ");
-			int option = sc.nextInt();
+			String option = sc.nextLine();
 			switch(option) {
-    	   case 1:
+    	   case "1":
     		   printDefinition();
     		   break;
-    	   case 2:  
+    	   case "2":  
     		   printSlangWord();
     		   break;
-    	   case 3:
-    		   
+    	   case "3":
+    		   viewHistory();
     		   break;
-    	   case 4: 
+    	   case "4": 
     		 
     		   break;
-    	   case 5: 
+    	   case "5": 
     		  
     		   break;
-    	   case 6:
+    	   case "6":
     		   
     		   break;
-    	   case 7:
+    	   case "7":
     		  
     		   break;
-    	   case 8:
+    	   case "8":
     		  
     		   break;
-    	   case 9:
+    	   case "9":
     		   
     		   break;
     	   default: 
@@ -192,6 +251,7 @@ public class SlangDictionary{
     	
 		   System.out.println("\n\tBan co muon tiep tuc khong?(yes/no)");
     	   System.out.print("\t\t\t");
+    	   
     	   repeat = sc.nextLine();
     	   System.out.println("\n");
 	}while(repeat.equals("yes")==true);
