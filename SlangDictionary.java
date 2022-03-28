@@ -7,16 +7,20 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-
+import java.util.Random;
 
 public class SlangDictionary{
 	
 	public static String fileslang="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/slang.txt";
 	public static String filehistory="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/history.txt";
+	public static String filebackup="D:/University/JAVA/SlangDictionary/SlangDictionary/Data/backup.txt";
 	public static ArrayList<String>historySearch=new ArrayList<String>();
+	public static ArrayList<Word>tempSlangQuiz=new ArrayList<Word>();
+	
 	public static Scanner sc = new Scanner(System.in);
 	
 	
@@ -25,10 +29,16 @@ public class SlangDictionary{
 		public String slangword;
 		public String definition;
 		public List<String>definitions;
+		
+		Word(){
+			
+		}
+		
 		Word(String slangword, String definition){
 			this.slangword=slangword;
 			this.definition=definition;
 		}
+		
 		Word(String slangword, List<String> definitions){
 			this.slangword=slangword;
 			this.definitions=definitions;
@@ -152,7 +162,7 @@ public class SlangDictionary{
     	return def;
     }
     
-    public static void printDefinition() {
+    public static void findDefinition() {
     	List<String> res=searchSlangWord();
     	if(res==null){
     		System.out.println("\nNot Found.");
@@ -180,7 +190,7 @@ public class SlangDictionary{
     	return list;
     }
     
-    public static void printSlangWord() {
+    public static void findSlangWord() {
     	ArrayList<Word> res=searchDefinition();
     	if(res.isEmpty()){
     		System.out.println("\nNot Found.");
@@ -219,6 +229,7 @@ public class SlangDictionary{
             System.out.println("Error: "+ex);
         }
     }
+    
     public static void updateSlangFile(Word newSlangWord) {
     	try {
     		File file=new File(fileslang);
@@ -238,6 +249,15 @@ public class SlangDictionary{
         catch (Exception ex) {
             System.out.println("Error: "+ex);
         }
+    }
+    
+    public static boolean checkSameSlangWord(Word word,ArrayList<Word>list) {
+    	for(Word i:list) {
+    		if(i.slangword==word.slangword) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     public static void addSlangWord() {
@@ -272,17 +292,32 @@ public class SlangDictionary{
     public static void deleteSlangWord() {
     	System.out.print("Type the word you wanna delete: ");
     	String word=sc.nextLine();
-    	word=word.toUpperCase();
-    	int k=0;
-    	for(String i:map.keySet()) {
-    		if(i.toUpperCase().equals(word)) {
-    			k=1;
-    		}
+    	String option=null;
+    	do {
+    	System.out.println("Are you sure about deleting this slang word?(yes/no)");
+    	option=sc.nextLine();
+    	switch(option) {
+    	case "yes":
+    	
+	    	word=word.toUpperCase();
+	    	int k=0;
+	    	for(String i:map.keySet()) {
+	    		if(i.toUpperCase().equals(word)) {
+	    			k=1;
+	    		}
+	    	}
+	    	if(k==0)
+	    		System.out.println("Not Found.");
+	    	else map.remove(word);
+	    	updateSlangFile();
+	    	break;
+    	case "no":
+    		return;
+    	default:
+    		option=null;
     	}
-    	if(k==0)
-    		System.out.println("Not Found.");
-    	else map.remove(word);
-    	updateSlangFile();
+    	}while(option==null);
+    	
     	
     }
 
@@ -290,6 +325,130 @@ public class SlangDictionary{
     	System.out.print("Type the slang word you wanna edit: ");
     	String word=sc.nextLine();
     	word=word.toUpperCase();
+    	
+    }
+    
+    public static void resetSlangDictionary() {
+    	try
+		{
+    		map.clear();
+			File file = new File(filebackup);
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+			String data;
+			while((data = br.readLine())!=null)
+			{
+				if(data.contains("`"))
+				{
+					String[] info= data.split("`");
+					String[] def = info[1].split("\\|");
+					for(int i=0;i<def.length;i++)
+					{
+						def[i]=def[i].toLowerCase();
+						def[i]=def[i].trim();
+					}
+					List<String>words=Arrays.asList(def);
+					map.put(info[0].trim(),words);
+				}
+			}
+		    fr.close();
+	        br.close();
+	    }
+	    catch (Exception ex)
+	    {
+	        System.out.println("ERROR"+ex);
+	    }
+    	
+    	updateSlangFile();
+    }
+    
+    public static Word getRandomSlangWord() {
+    	Word word=null;
+    	Random random=new Random();
+    	int index=random.nextInt(map.size());
+    	int count=0;
+    	for(String i: map.keySet()) {
+    		if(count==index) {
+    			word=new Word(i,map.get(i));
+    		}
+    		count++;
+    	}
+    	return word;
+    }
+    
+    public static void printrandomSlangWord() {
+    	Word randomSlangWord=getRandomSlangWord();
+    	if(randomSlangWord==null) {
+    		System.out.println("ERROR");
+    	}
+    	else {
+    		System.out.println("\n\t\tRandom Slang Word:");
+    		System.out.println("\n\t"+randomSlangWord.slangword);
+    		System.out.println("\n\t\tDefinitions:");
+    		for(String i:randomSlangWord.definitions){
+    			System.out.print("\n\t"+i);
+    		}
+    	}
+    	System.out.print("\n");
+    }
+    
+    public static void quizSlangWord() {
+    	Word randomSlangWord=getRandomSlangWord();
+    	tempSlangQuiz.add(randomSlangWord);
+    	Word temp=new Word();
+    	int k=0;
+    	do {
+    		temp=getRandomSlangWord();
+    		if(!checkSameSlangWord(temp,tempSlangQuiz)) {
+    			k++;
+    			tempSlangQuiz.add(temp);
+    		}
+    	}while(k<3);
+    	for(Word i:tempSlangQuiz) {
+    		
+    	
+    	System.out.print(i.slangword);
+    	System.out.println("\t"+i.definitions);
+    	}
+    	Collections.shuffle(tempSlangQuiz);
+    	char a='A';
+    	System.out.println("\n\t\tQUIZ");
+    	System.out.println("\n\t\t"+randomSlangWord.slangword);
+    	for(Word i:tempSlangQuiz) {
+    		System.out.println("\n"+a+". "+i.definitions);
+    		a=(char)(((int)a)+1);
+    	}
+    	String choice=null;
+    	boolean check=false;
+    	do {
+    	System.out.print("\nYour Answer: ");
+    	choice=sc.nextLine();
+    	choice=choice.toUpperCase();
+    	switch(choice) {
+    	case "A":
+    		if(tempSlangQuiz.get(0).definitions==randomSlangWord.definitions)check=true;
+    		break;
+    	case "B":
+    		if(tempSlangQuiz.get(1).definitions==randomSlangWord.definitions)check=true;
+    		break;
+    	case "C":
+    		if(tempSlangQuiz.get(2).definitions==randomSlangWord.definitions)check=true;
+    		break;
+    	case "D":
+    		if(tempSlangQuiz.get(3).definitions==randomSlangWord.definitions)check=true;
+    		break;
+    	default:
+    		System.out.println("\n\tYour answer is invalid. Please try again.");
+    		break;
+    	}
+    	}while(!choice.equals("A")&&!choice.equals("B")&&!choice.equals("C")&&!choice.equals("D"));
+    	if(check)System.out.println("\n\tHurray.. You are so intelligent.");
+    	else System.out.println("\n\tBetter next time..");
+    	tempSlangQuiz.clear();
+    }
+    
+    public static void quizDefinition() {
+    	//Word randomSlangWord=getRandomSlangWord();
     	
     }
     
@@ -314,31 +473,36 @@ public class SlangDictionary{
 			String option = sc.nextLine();
 			switch(option) {
     	   case "1":
-    		   printDefinition();
+    		   findDefinition();
     		   break;
     	   case "2":  
-    		   printSlangWord();
+    		   findSlangWord();
     		   break;
     	   case "3":
     		   viewHistory();
     		   break;
     	   case "4": 
-    		   addSlangWord();
+    		   addSlangWord();//kiem tra co ton tai chua
     		   break;
     	   case "5": 
-    		   editSlangWord();
+    		   editSlangWord();//chua lam
     		   break;
     	   case "6":
     		   deleteSlangWord();
     		   break;
     	   case "7":
-    		  
+    		   resetSlangDictionary();
     		   break;
     	   case "8":
-    		  
+    		   printrandomSlangWord();
     		   break;
     	   case "9":
-    		   
+    		   quizSlangWord();
+    		   break;
+    	   case "10":
+    		   Word w=new Word("vu","ngu");
+    		   tempSlangQuiz.add(w);
+    		   if(checkSameSlangWord(w,tempSlangQuiz))System.out.print("\n1");;
     		   break;
     	   default: 
     		   System.out.println("\n\tLua chon cua ban khong hop le.");
@@ -355,9 +519,10 @@ public class SlangDictionary{
 	
 	public static void main(String[] args) {
 	    Menu();
+	    historySearch=null;
+	    map=null;
+	    tempSlangQuiz=null;
 	    sc.close();
 	}
 }
-		
-
 		
