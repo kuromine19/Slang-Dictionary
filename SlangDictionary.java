@@ -23,8 +23,6 @@ public class SlangDictionary{
 	
 	public static Scanner sc = new Scanner(System.in);
 	
-	
-	
 	public static class Word{
 		public String slangword;
 		public String definition;
@@ -564,6 +562,7 @@ public class SlangDictionary{
 			System.out.println("7. Reset dictionary.");
 			System.out.println("8. Random a slang word.");
 			System.out.println("9. Slang Quiz.");
+			System.out.println("10. Definition Quiz.");
 			System.out.print("Your choice: ");
 			String option = sc.nextLine();
 			switch(option) {
