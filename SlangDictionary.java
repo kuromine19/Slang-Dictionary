@@ -86,9 +86,7 @@ public class SlangDictionary{
 	        System.out.println("ERROR"+ex);
 	    }
 	}
-    
-   
-    
+       
     public static void getHistory() {
     	try {
     		
@@ -107,9 +105,7 @@ public class SlangDictionary{
 	    {
 	        System.out.println("ERROR"+ex);
 	    }
-    }
-    
- 
+    }  
     
     public static void updateHistoryFile(String word) {
     	try {
@@ -125,22 +121,36 @@ public class SlangDictionary{
         }
     }
     
+    public static void resetHistory() {
+    	try {
+    		File file=new File(filehistory);
+    		FileWriter fw=new FileWriter(file);
+    		BufferedWriter bw = new BufferedWriter(fw);
+    		fw.write("");
+    		fw.close();
+            bw.close();
+        }
+        catch (Exception ex) {
+            System.out.println("Error: "+ex);
+        }
+    	System.out.println("\n\t\tReset History successfully!");
+    }
+    
     public static void viewHistory() {
     	getHistory();
     	if(historySearch.isEmpty()) {
-    		System.out.println("Empty history!");
+    		System.out.println("\n\t\t\tEmpty history!");
     		return;
     	}
-    	System.out.println("\t\tHistory - Slang Words you have searched: ");
+    	System.out.println("\n\t\tHistory - Slang Words you have searched: \n");
     	for(String slangWord: historySearch) {
-    		System.out.println("\t"+slangWord);
+    		System.out.println("\t\t\t\t"+slangWord);
     	}
     	historySearch.clear();
-    	
     }
     
     public static List<String> searchSlangWord() {
-    	System.out.print("\nType the slang word you wanna search: ");
+    	System.out.print("\n\t\tType the slang word you wanna search: ");
     	String word=sc.nextLine();
     	word=word.toUpperCase();
     	updateHistoryFile(word);
@@ -156,18 +166,18 @@ public class SlangDictionary{
     public static void findDefinition() {
     	List<String> res=searchSlangWord();
     	if(res==null){
-    		System.out.println("\nNot Found.");
+    		System.out.println("\n\t\t\tNot Found.");
     		return;
     	}
-    	System.out.println("\nDefinitions:");
+    	System.out.println("\n\t\tDefinitions:");
     	for(String i:res) {
-    		System.out.println("\t"+i);
+    		System.out.println("\t\t\t"+i);
     	}
     }
     
     public static ArrayList<Word> searchDefinition() {
-    	System.out.print("\nType any definitions you wanna search: ");
-    	
+    	System.out.print("\n\t\tType any definitions you wanna search: ");
+
     	String word=sc.nextLine();
     	ArrayList<Word>list=new ArrayList<Word>();
     	for(String i: map.keySet()) {
@@ -184,15 +194,15 @@ public class SlangDictionary{
     public static void findSlangWord() {
     	ArrayList<Word> res=searchDefinition();
     	if(res.isEmpty()){
-    		System.out.println("\nNot Found.");
+    		System.out.println("\n\t\t\tNot Found.");
     		return;
     	}
-    	System.out.println("Slang Word relating to the definition you have searched: ");
-    	System.out.print("\nSlang Word");
-    	System.out.println("\tDefinitions");
+    	System.out.println("\t\tSlang Word relating to the definition you have searched: ");
+    	System.out.print("\n\t\tSlang Word");
+    	System.out.println("\t\tDefinitions\n");
     	for(Word i:res) {
-    		System.out.print(i.slangword);
-    		System.out.println("\t\t"+i.definition);
+    		System.out.print("\t\t"+i.slangword);
+    		System.out.println("\t\t\t"+i.definition);
     	}
     	
     }
@@ -252,7 +262,7 @@ public class SlangDictionary{
     }
     
     public static void addSlangWord() {
-    	System.out.print("Type the slang word you wanna add: ");
+    	System.out.print("\n\t\tType the slang word you wanna add: ");
     	String word=sc.nextLine();
     	word=word.toUpperCase();
     	boolean check=false;
@@ -261,7 +271,7 @@ public class SlangDictionary{
     	}
     	if(!check)
     	{
-	    	System.out.print("Type the definitions of the slang word: ");
+	    	System.out.print("\n\t\tType the definitions of the slang word: ");
 	    	ArrayList<String>definitions=new ArrayList<String>();
 	    	String def=null;
 	    	def=sc.nextLine();
@@ -273,27 +283,28 @@ public class SlangDictionary{
 	    	def=sc.nextLine();
 	    	definitions.add(def);
 	    	}
-	    	System.out.println("You wanna add more definition?(yes/no)");
+	    	System.out.println("\n\t\tYou wanna add more definition?(yes/no)");
+	    	System.out.print("\t\t\t\t");
 	    	option=sc.nextLine();
 	    	option=option.toUpperCase();
 	    	switch(option) {
 	    	case "YES":
-	    		System.out.print("Type another definition for the slang word: ");
+	    		System.out.print("\n\t\tType another definition for the slang word: ");
 	    		break;
 	    	case "NO":
 	    		break;
 	    	default:
-	    		System.out.println("\n\tInvalid option.\n");
+	    		System.out.println("\n\t\t\tInvalid option.\n");
 	    	}
 	    	}while(option.equals("YES")||(!option.equals("YES")&&!option.equals("NO")));
 	    	Word newSlangWord=new Word(word,definitions);
 	    	updateSlangFile(newSlangWord);
     	}
-    	else System.out.println("\n\tThe slang word you wanna add is existed");
+    	else System.out.println("\n\t\tThe slang word you wanna add is existed!");
     }
     
     public static void deleteSlangWord() {
-    	System.out.print("\n\tType the word you wanna delete: ");
+    	System.out.print("\n\t\tType the word you wanna delete: ");
     	String word=sc.nextLine();
     	word=word.toUpperCase();
     	String option=null;
@@ -303,28 +314,30 @@ public class SlangDictionary{
     	}
     	if(check) {
 	    	do {
-	    	System.out.println("\n\tAre you sure you wanna delete this slang word?(yes/no)");
+	    	System.out.println("\n\t\tAre you sure you wanna delete this slang word?(yes/no)");
+	    	System.out.print("\t\t\t\t");
 	    	option=sc.nextLine();
 	    	option=option.toUpperCase();
 	    	switch(option) {
 	    	case "YES":
 		    	map.remove(word);
 		    	updateSlangFile();
+		    	System.out.println("\n\t\tThis slang word has been deleted successfuly.");
 		    	break;
 	    	case "NO":
 	    		break;
 	    	default:
-	    		System.out.println("\n\tInvalid option.\n");
+	    		System.out.println("\n\t\t\tInvalid option.\n");
 	    		option=null;
 	    	}
 	    	}while(option==null);
 	    	
 	    	}
-	    	else System.out.println("\n\tNot Found.");
+	    	else System.out.println("\n\t\t\tNot Found.");
     	}
 
     public static void editSlangWord() {
-    	System.out.print("\n\tType the slang word you wanna edit: ");
+    	System.out.print("\n\t\tType the slang word you wanna edit: ");
     	String word=sc.nextLine();
     	ArrayList<String>definitions=new ArrayList<String>();
     	word=word.toUpperCase();
@@ -335,13 +348,14 @@ public class SlangDictionary{
     	}
     	if(check) {
 	    	do {
-	    	System.out.println("\n\tAre you sure you wanna edit this slang word?(yes/no)");
-	    	option=sc.nextLine();
+	    	System.out.println("\n\t\tAre you sure you wanna edit this slang word?(yes/no)");
+	    	System.out.print("\t\t\t\t");
+	    	option=sc.nextLine();	 
 	    	option=option.toUpperCase();
 	    	switch(option) {
 	    	case "YES":   	
 		    	map.remove(word);
-		    	System.out.print("\tType new definition for the slang word: ");
+		    	System.out.print("\t\tType new definition for the slang word: ");
 		    	String op="";
 		    	String def=null;
 		    	def=sc.nextLine();
@@ -352,12 +366,13 @@ public class SlangDictionary{
 		    	def=sc.nextLine();
 		    	definitions.add(def);
 		    	}
-		        System.out.println("\n\tYou wanna add more definitions?(yes/no)");
+		        System.out.println("\n\t\tYou wanna add more definitions?(yes/no)");
+		        System.out.print("\t\t\t\t");
 		        op=sc.nextLine();
 		        op=op.toUpperCase();
 		        switch(op) {
 		        case "YES":
-		        	System.out.print("\tType another definition for the slang word: ");
+		        	System.out.print("\t\tType another definition for the slang word: ");
 		        	break;
 		        case "NO":
 		        	break;
@@ -368,17 +383,18 @@ public class SlangDictionary{
 		        }while(op.toUpperCase().equals("YES")||(!op.toUpperCase().equals("YES")&&!op.toUpperCase().equals("NO")));
 		        map.put(word,definitions);
 		        updateSlangFile();
+		        System.out.println("\n\t\tThis slang word has been edited successfuly.");
 		        break;
 	    	case "NO":
 	    		break;
 	    	default:
-	    		System.out.println("\n\tInvalid option.\n");
+	    		System.out.println("\n\t\t\tInvalid option.\n");
 	    		option=null;
 	    		break;
 	    	}
 	    	}while(option==null);
 	    	}
-    	else System.out.println("Not Found.");
+    	else System.out.println("\n\t\t\tNot Found.");
     }
     
     public static void resetSlangDictionary() {
@@ -406,6 +422,7 @@ public class SlangDictionary{
 			}
 		    fr.close();
 	        br.close();
+	        System.out.println("\n\t\tReset dictionary successfuly.");
 	    }
 	    catch (Exception ex)
 	    {
@@ -432,14 +449,14 @@ public class SlangDictionary{
     public static void printrandomSlangWord() {
     	Word randomSlangWord=getRandomSlangWord();
     	if(randomSlangWord==null) {
-    		System.out.println("ERROR");
+    		System.out.println("\t\t\t\tERROR");
     	}
     	else {
     		System.out.println("\n\t\tRandom Slang Word:");
-    		System.out.println("\n\t"+randomSlangWord.slangword);
+    		System.out.println("\n\t\t\t"+randomSlangWord.slangword);
     		System.out.println("\n\t\tDefinitions:");
     		for(String i:randomSlangWord.definitions){
-    			System.out.print("\n\t"+i);
+    			System.out.print("\n\t\t\t"+i);
     		}
     	}
     	System.out.print("\n");
@@ -459,16 +476,16 @@ public class SlangDictionary{
     	}while(k<3);
     	Collections.shuffle(tempSlangQuiz);
     	char a='A';
-    	System.out.println("\n\t\tQUIZ");
-    	System.out.println("\n\t\t"+randomSlangWord.slangword);
+    	System.out.println("\n\t\t\t\tQUIZ");
+    	System.out.println("\n\t\t\t\t"+randomSlangWord.slangword);
     	for(Word i:tempSlangQuiz) {
-    		System.out.println("\n"+a+". "+i.definitions);
+    		System.out.println("\n\t\t"+a+". "+i.definitions);
     		a=(char)(((int)a)+1);
     	}
     	String choice=null;
     	boolean check=false;
     	do {
-    	System.out.print("\nYour Answer: ");
+    	System.out.print("\n\t\tYour Answer: ");
     	choice=sc.nextLine();
     	choice=choice.toUpperCase();
     	switch(choice) {
@@ -485,12 +502,12 @@ public class SlangDictionary{
     		if(tempSlangQuiz.get(3).definitions==randomSlangWord.definitions)check=true;
     		break;
     	default:
-    		System.out.println("\n\tYour answer is invalid. Please try again.");
+    		System.out.println("\n\t\tYour answer is invalid. Please try again.");
     		break;
     	}
     	}while(!choice.equals("A")&&!choice.equals("B")&&!choice.equals("C")&&!choice.equals("D"));
-    	if(check)System.out.println("\n\tHurray.. You are so intelligent.");
-    	else System.out.println("\n\tBetter next time..");
+    	if(check)System.out.println("\n\t\t\tHurray.. Correct! You are so intelligent!");
+    	else System.out.println("\n\t\t\tBetter next time..");
     	tempSlangQuiz.clear();
     }
     
@@ -509,16 +526,16 @@ public class SlangDictionary{
     	
     	Collections.shuffle(tempSlangQuiz);
     	char a='A';
-    	System.out.println("\n\t\tQUIZ");
-    	System.out.println("\n\t\t"+randomSlangWord.definitions);
+    	System.out.println("\n\t\t\t\tQUIZ");
+    	System.out.println("\n\t\t\t"+randomSlangWord.definitions);
     	for(Word i:tempSlangQuiz) {
-    		System.out.println("\n"+a+". "+i.slangword);
+    		System.out.println("\n\t\t"+a+". "+i.slangword);
     		a=(char)(((int)a)+1);
     	}
     	String choice=null;
     	boolean check=false;
     	do {
-    	System.out.print("\nYour Answer: ");
+    	System.out.print("\n\t\tYour Answer: ");
     	choice=sc.nextLine();
     	choice=choice.toUpperCase();
     	switch(choice) {
@@ -535,12 +552,12 @@ public class SlangDictionary{
     		if(tempSlangQuiz.get(3).slangword==randomSlangWord.slangword)check=true;
     		break;
     	default:
-    		System.out.println("\n\tYour answer is invalid. Please try again.");
+    		System.out.println("\n\t\t\tYour answer is invalid. Please try again.");
     		break;
     	}
     	}while(!choice.equals("A")&&!choice.equals("B")&&!choice.equals("C")&&!choice.equals("D"));
-    	if(check)System.out.println("\n\tHurray.. You are so intelligent.");
-    	else System.out.println("\n\tBetter next time..");
+    	if(check)System.out.println("\n\t\tHurray.. Correct! You are so intelligent.");
+    	else System.out.println("\n\t\tBetter next time..");
     	tempSlangQuiz.clear();
     }
     
@@ -552,18 +569,19 @@ public class SlangDictionary{
 			getSlangWord();
 			clearConsoleScreen();
 			repeat=null;
-			System.out.println("\t\tMENU");
-			System.out.println("1. Find definitions by slang word.");
-			System.out.println("2. Find slang word by definiton.");
-			System.out.println("3. History.");
-			System.out.println("4. Add slang word.");
-			System.out.println("5. Edit slang word.");
-			System.out.println("6. Delete slang word.");
-			System.out.println("7. Reset dictionary.");
-			System.out.println("8. Random a slang word.");
-			System.out.println("9. Slang Quiz.");
-			System.out.println("10. Definition Quiz.");
-			System.out.print("Your choice: ");
+			System.out.println("\t\t\t\t\tMENU\n");
+			System.out.println("\t\t\t1. Find definitions by slang word.");
+			System.out.println("\t\t\t2. Find slang word by definiton.");
+			System.out.println("\t\t\t3. History.");
+			System.out.println("\t\t\t4. Reset History.");
+			System.out.println("\t\t\t5. Add slang word.");
+			System.out.println("\t\t\t6. Edit slang word.");
+			System.out.println("\t\t\t7. Delete slang word.");
+			System.out.println("\t\t\t8. Reset dictionary.");
+			System.out.println("\t\t\t9. Random a slang word.");
+			System.out.println("\t\t\t10. Slang Quiz.");
+			System.out.println("\t\t\t11. Definition Quiz.");
+			System.out.print("\n\t\t\tYour choice: ");
 			String option = sc.nextLine();
 			switch(option) {
     	   case "1":
@@ -575,40 +593,43 @@ public class SlangDictionary{
     	   case "3":
     		   viewHistory();
     		   break;
-    	   case "4": 
-    		   addSlangWord();
+    	   case "4":
+    		   resetHistory();
     		   break;
     	   case "5": 
+    		   addSlangWord();
+    		   break;	
+    	   case "6": 
     		   editSlangWord();
     		   break;
-    	   case "6":
+    	   case "7":
     		   deleteSlangWord();
     		   break;
-    	   case "7":
+    	   case "8":
     		   resetSlangDictionary();
     		   break;
-    	   case "8":
+    	   case "9":
     		   printrandomSlangWord();
     		   break;
-    	   case "9":
+    	   case "10":
     		   quizSlangWord();
     		   break;
-    	   case "10":
+    	   case "11":
     		   quizDefinition();
     		   break;
     	   default: 
-    		   System.out.println("\n\tYour choice is invalid.");
+    		   System.out.println("\n\t\t\tYour choice is invalid.");
     		   break;
     	}
 		do {
-		   System.out.println("\n\tDo you wanna continue?(yes/no)");
+		   System.out.println("\n\t\tDo you wanna continue?(yes/no)");
     	   System.out.print("\t\t\t");
     	  
     	   repeat = sc.nextLine();
     	   repeat=repeat.toUpperCase();
     	   System.out.print("\n");
     	   if(!repeat.equals("YES")&&!repeat.equals("NO"))
-    		   System.out.println("\tInvalid option.\n");
+    		   System.out.println("\t\t\tInvalid option.\n");
 		}while(!repeat.equals("YES")&&!repeat.equals("NO"));   
 	}while(repeat.equals("YES"));
 	System.out.print("\n\t\tSEE YOU LATER..");
@@ -622,4 +643,3 @@ public class SlangDictionary{
 	    sc.close();
 	}
 }
-		
